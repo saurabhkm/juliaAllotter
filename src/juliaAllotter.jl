@@ -14,7 +14,7 @@ studentsFile = "/nfs4/saurabh1/Workspace/Projects/juliaAllotter/data/studentsFil
 choiceIndices = [0, 1, 2, 3, 4, 5]
 choiceWeights = [10, 1, 2, 3, 4, 5]
 costWeights = [-1.0, 1.0, 1.0]
-iterations = 10000
+iterations = 4900
 
 coursesDF = CSV.read(courseFile)
 studentsDF = CSV.read(studentsFile)
