@@ -29,8 +29,8 @@ function squeezeAllotment(anAllotment::allotment)
 	dataHolder = zeros(anAllotment.studentCount, anAllotment.courseCount)
 	start = 1
 	for i = 1:anAllotment.courseCount
-		stop = start + anAllotment.times[i] - 1
-		dataHolder[:, i] = collect(Iterators.flatten(sum(anAllotment.data[:,start:stop], dims=2)))
+		stop = start + anAllotment.times[i]
+		dataHolder[:, i] = collect(Iterators.flatten(sum(anAllotment.data[:,start:stop-1], dims=2)))
 		start = stop
 	end
 	anAllotment.data = dataHolder
@@ -39,20 +39,22 @@ end
 
 function calcGoodness(anAllotment::allotment, choiceWeights, cpiArray)
 	a = anAllotment.data .* choiceWeights
-	choiceGoodness = sum(a, dims=1) ./ transpose(anAllotment.times)
+	choiceGoodness = sum(a, dims=2) ./ sum(a .!= 0, dims=2)
+	choiceGoodness = replace!(choiceGoodness, NaN=>0)
 	cpiRepeated = repeat(cpiArray, outer=[1, anAllotment.courseCount])
 	SvC_cpi = anAllotment.data .* cpiRepeated
-	cpiGoodness = sum(SvC_cpi, dims=1) ./ transpose(anAllotment.times)
+	cpiGoodness = sum(SvC_cpi, dims=1) ./ sum(SvC_cpi .!= 0, dims=1)
+	cpiGoodness = replace!(cpiGoodness, NaN=>0)
 	return choiceGoodness, cpiGoodness
 end
 
 function swapRows(anAllotment::allotment)
-	swapID1 = rand(1:anAllotment.courseCount)
-	swapID2 = rand(1:anAllotment.courseCount)
+	swapID1 = rand(1:anAllotment.studentCount)
+	swapID2 = rand(1:anAllotment.studentCount)
 	temp = copy(anAllotment.data)
 	tempVar = copy(temp[swapID1, :])
-	temp[swapID2,:] = tempVar
 	temp[swapID1,:] = temp[swapID2,:]
+	temp[swapID2,:] = tempVar
 	return temp
 end
 
@@ -66,7 +68,8 @@ end
 function calculateVariance(cpiArray, anAllotment, courseCount, times)
 	cpiRepeated = repeat(cpiArray, outer=[1, courseCount])
 	SvC_cpi = anAllotment .* cpiRepeated
-	a = sum(SvC_cpi, dims=1) ./ transpose(times)
+	a = sum(SvC_cpi, dims=1) ./ sum(SvC_cpi .!= 0, dims=1)
+	a = replace!(a, NaN=>0)
 	variance = var(a)
 	return variance
 end
@@ -115,8 +118,8 @@ function runMCMC(currentAllotment, nIters, studentCount, courseCount, costWeight
 		if u1 >= u2
 			currentAllotment.data = newAllotmentData
 		else
-			beta = 10*log10(1+i)
-			probVar = exp(beta*(u1 -u2))
+			beta = 10*log10(1+(i-1))
+			probVar = exp(beta*(u1 - u2))
 			randNum = rand()
 			if randNum < probVar
 				currentAllotment.data = newAllotmentData

@@ -6,6 +6,9 @@ using Statistics
 using JLD
 include("core.jl")
 
+import Random
+Random.seed!(2^13 - 1)
+
 courseFile = "/nfs4/saurabh1/Workspace/Projects/juliaAllotter/data/courseFile.csv"
 studentsFile = "/nfs4/saurabh1/Workspace/Projects/juliaAllotter/data/studentsFile.csv"
 choiceIndices = [0, 1, 2, 3, 4, 5]
@@ -28,6 +31,7 @@ initialAllotment = allotment(studentCount, courseCount, times, Matrix{Float64}(I
 initialAllotment = squeezeAllotment(initialAllotment)
 
 choiceGoodnessOld, cpiGoodnessOld = calcGoodness(initialAllotment, choiceWeights, cpiArray)
+
 finalAllottment, utility = runMCMC(initialAllotment, iterations, studentCount, courseCount, costWeights, choiceIdx, choiceWeights, studentsDF, cpiArray, times)
 choiceGoodnessNew, cpiGoodnessNew = calcGoodness(finalAllottment, choiceWeights, cpiArray)
 
