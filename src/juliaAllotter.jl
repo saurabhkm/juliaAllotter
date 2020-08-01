@@ -9,8 +9,8 @@ include("core.jl")
 import Random
 Random.seed!(2^13 - 1)
 
-courseFile = "../data/courseFile.csv"
-studentsFile = "../data/studentsFile.csv"
+courseFile = "data/courseFile.csv"
+studentsFile = "data/studentsFile.csv"
 choiceIndices = [0, 1, 2, 3, 4, 5]
 choiceWeights = [10, 1, 2, 3, 4, 5]
 costWeights = [-1.0, 1.0, 1.0]

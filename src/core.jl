@@ -132,5 +132,5 @@ function runMCMC(currentAllotment, nIters, studentCount, courseCount, costWeight
 end
 
 function writePerformance(anAllotment, choiceGoodnessOld, cpiGoodnessOld, choiceGoodnessNew, cpiGoodnessNew, utility)
-	save("../results/myfile.jld", "allotment", allotment, "choiceGoodnessOld", choiceGoodnessOld, "cpiGoodnessOld", cpiGoodnessOld, "choiceGoodnessNew", choiceGoodnessNew, "cpiGoodnessNew", cpiGoodnessNew, "utility", utility)
+	save("results/myfile.jld", "allotment", allotment, "choiceGoodnessOld", choiceGoodnessOld, "cpiGoodnessOld", cpiGoodnessOld, "choiceGoodnessNew", choiceGoodnessNew, "cpiGoodnessNew", cpiGoodnessNew, "utility", utility)
 end
